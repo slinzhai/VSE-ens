@@ -84,8 +84,8 @@ public class WARP {
 	}
 
 	// You can evaluate images one by one for optimization instead of ranking all once.
-	Integer [][] recommendRank(){
-		Integer [][] recommendedList = new Integer[Config.imageNum][Config.annoNum];
+	Integer [][] predictRank(){
+		Integer [][] predictedList = new Integer[Config.imageNum][Config.annoNum];
 		for (Integer pid : testMatrix.keySet()){
 			double [] ratings = new double[Config.annoNum];
 			for(Integer iid = 0; iid < Config.annoNum; ++iid){
@@ -95,16 +95,16 @@ public class WARP {
 			// Get the recommended list for current image
 			List<Entry<Integer, Double>> result = this.sortVectorDecend(ratings);
 			for(Integer index = 0; index < Config.annoNum; ++index){
-				recommendedList[pid][index] = result.get(index).getKey();
+				predictedList[pid][index] = result.get(index).getKey();
 			}
 		}
-		return recommendedList;
+		return predictedList;
 	}
 
 	
 	void eval()throws IOException{
 		System.out.println("\nEvaluating WARP model..........\n");
-		Evaluation evaluator = new Evaluation(this.trainMatrix,this.testMatrix,this.recommendRank());
+		Evaluation evaluator = new Evaluation(this.trainMatrix,this.testMatrix,this.predictRank());
 		System.out.println("Precision@" + Config.topNEvaluate + ":  " + evaluator.PrecisionEvaluator());
 		System.out.println("Recall@" + Config.topNEvaluate + ":  " + evaluator.RecallEvaluator());
 		System.out.println("\nEnd evaluation..........");
@@ -169,7 +169,7 @@ public class WARP {
 		double pos_score = VectorCalc.vectorInnerProduct(P[pid], Q[iid]);
 		// Sample score of negative annotation is larger than positive annotation
 		for ( Integer aid = 1; aid < Config.annoNum; ++aid ){
-		    if (this.trainMatrix.get(pid).contains(aid) || (this.testMatrix.get(pid)!=null&&this.testMatrix.get(pid).contains(aid))) continue;
+		    if (this.trainMatrix.get(pid).contains(aid)) continue;
 		    if (VectorCalc.vectorInnerProduct(P[pid], Q[aid]) + 1.0 > pos_score){
 		        neg_img = aid;
 		        break;
@@ -277,6 +277,6 @@ public class WARP {
 		Config.roundNum = 100;
 		Config.eta = 0.1;
 		Config.K = 100;
-		Config.optauc.driver();
+		Config.warp.driver();
 	}
 }
