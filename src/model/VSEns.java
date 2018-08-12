@@ -177,7 +177,7 @@ public class VSEns {
 	
     void eval()throws IOException{
 		System.out.println("\nEvaluating VSE-ens model..........\n");
-		Evaluation evaluator = new Evaluation(this.trainMatrix,this.testMatrix,this.recommendRank());
+		Evaluation evaluator = new Evaluation(this.trainMatrix,this.testMatrix,this.predictRank());
 		System.out.println("Precision@" + Config.topNEvaluate + ":  " + evaluator.PrecisionEvaluator());
 		System.out.println("Recall@" + Config.topNEvaluate + ":  " + evaluator.RecallEvaluator());
 		System.out.println("\nEnd evaluation..........");
@@ -273,8 +273,8 @@ public class VSEns {
 	}
 	
 	// You can evaluate images one by one for optimization instead of ranking all once.
-	Integer [][] recommendRank(){
-		Integer [][] recommendedList = new Integer[Config.imageNum][Config.annoNum];
+	Integer [][] predictRank(){
+		Integer [][] predictedList = new Integer[Config.imageNum][Config.annoNum];
 		for (Integer pid : testMatrix.keySet()){
 			double [] ratings = new double[Config.annoNum];
 			for(Integer iid = 0; iid < Config.annoNum; ++iid){
@@ -284,10 +284,10 @@ public class VSEns {
 			// Get the recommended list for current image
 			List<Entry<Integer, Double>> result = this.sorteVectorValue(ratings, true);
 			for(Integer index = 0; index < Config.annoNum; ++index){
-				recommendedList[pid][index] = result.get(index).getKey();
+				predictedList[pid][index] = result.get(index).getKey();
 			}
 		}
-		return recommendedList;
+		return predictedList;
 	}
 
 	/**
