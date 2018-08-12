@@ -6,7 +6,7 @@ By Guibing Guo, Songlin Zhai, Fajie Yuan, Yuan Liu, Xingwei Wang
 
 VSE-ens is released under the Apache-2.0 License.
 
-### This code is supported by Weinan Zhang's svd-bpr framework
+### This code is supported by Weinan Zhang
 
 ### Citing VSE-ens model
 
