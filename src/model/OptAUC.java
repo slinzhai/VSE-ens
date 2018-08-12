@@ -59,7 +59,7 @@ public class OptAUC {
 		double maxauc = Double.MIN_VALUE;
 		
 		for(int i = 0; i < Config.roundNum; ++i){
-			trainOneRoundRandomly();
+			trainOneRound();
 			auc = calAUC();
 			maxauc = Math.max(maxauc, auc);
 			if(Config.showResultsEachRound){
@@ -87,8 +87,8 @@ public class OptAUC {
 	}
 
 	// You can evaluate images one by one for optimization instead of ranking all once.
-	Integer [][] recommendRank(){
-		Integer [][] recommendedList = new Integer[Config.imageNum][Config.annoNum];
+	Integer [][] predictRank(){
+		Integer [][] predictedList = new Integer[Config.imageNum][Config.annoNum];
 		for (Integer pid : testMatrix.keySet()){
 			double [] ratings = new double[Config.annoNum];
 			for(Integer iid = 0; iid < Config.annoNum; ++iid){
@@ -98,16 +98,16 @@ public class OptAUC {
 			// Get the recommended list for current image
 			List<Entry<Integer, Double>> result = this.sortVectorDecend(ratings);
 			for(Integer index = 0; index < Config.annoNum; ++index){
-				recommendedList[pid][index] = result.get(index).getKey();
+				predictedList[pid][index] = result.get(index).getKey();
 			}
 		}
-		return recommendedList;
+		return predictededList;
 	}
 
 	
 	void eval()throws IOException{
 		System.out.println("\nEvaluating Opt-AUC model..........\n");
-		Evaluation evaluator = new Evaluation(this.trainMatrix,this.testMatrix,this.recommendRank());
+		Evaluation evaluator = new Evaluation(this.trainMatrix,this.testMatrix,this.predictRank());
 		System.out.println("Precision@" + Config.topNEvaluate + ":  " + evaluator.PrecisionEvaluator());
 		System.out.println("Recall@" + Config.topNEvaluate + ":  " + evaluator.RecallEvaluator());
 		System.out.println("\nEnd evaluation..........");
@@ -128,36 +128,8 @@ public class OptAUC {
         });
 		return list;
 	}
-
-
-	double trainOneRound() throws IOException{
-		Random rand = new Random(Config.randomSeed);
-		double loss = 0;
-		for(Integer pid : trainMatrix.keySet()){
-			HashSet<Integer> posItems = trainMatrix.get(pid);
-			for(Integer iid : posItems){  // You can tune here for randomly sample a positive image instead of traverse the whole positive set
-				Integer jid =  rand.nextInt(Config.annoNum);
-				while(trainMatrix.get(pid).contains(jid) || jid == 0) jid = rand.nextInt(Config.annoNum);
-				
-				double hat_r_ui = VectorCalc.vectorInnerProduct(P[pid], Q[iid]);
-				double hat_r_uj = VectorCalc.vectorInnerProduct(P[pid], Q[jid]);
-
-				loss += -Math.log(1.0 / (1.0 + Math.exp(-(hat_r_ui - hat_r_uj)))); // -ln(sigmoid(x)), x = hat_r_ui-hat_r_uj
-				double gradient = 1.0 / (1.0 + Math.exp(hat_r_ui - hat_r_uj));     // sigmoid(-x), x = hat_r_ui-hat_r_uj
-				
-				for(int k = 0; k < Config.K; ++k){
-					P[pid][k] = P[pid][k] + Config.eta * (gradient * (Q[iid][k] - Q[jid][k]) - Config.lambdau * P[pid][k]);
-					Q[iid][k] = Q[iid][k] + Config.eta * (gradient * P[pid][k] - Config.lambdai * Q[iid][k]);
-					Q[jid][k] = Q[jid][k] + Config.eta * (- gradient * P[pid][k] - Config.lambdai * Q[jid][k]);
-					
-					loss += Config.lambdau*P[pid][k]*P[pid][k] + Config.lambdai*Q[iid][k]*Q[iid][k] +  Config.lambdai*Q[jid][k]*Q[jid][k];
-				}
-			}
-		}
-		return loss;
-	}
 	
-	double trainOneRoundRandomly() throws IOException{
+	double trainOneRound() throws IOException{
 		Random rand = new Random(Config.randomSeed);
 		double loss = 0;
 		Set<Integer> images_ = this.trainMatrix.keySet();
