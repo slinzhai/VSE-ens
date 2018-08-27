@@ -6,19 +6,15 @@ By Guibing Guo, Songlin Zhai, Fajie Yuan, Yuan Liu, Xingwei Wang
 
 VSE-ens is released under the Apache-2.0 License.
 
-### This code is supported by Weinan Zhang
+### Our VSE-ens implementation is built on the source code framework of AUC-optimization authored by Weinan Zhang.
 
 ### Citing VSE-ens model
 
 If you find VSE-ens useful in your research, please consider citing:
 
-    @inproceedings{DBLP:conf/aaai/GuoZYLW18,
-         author    = {Guibing Guo and Songlin Zhai and Fajie Yuan and Yuan Liu and Xingwei Wang},
-         title     = {VSE-ens: Visual-Semantic Embeddings with Efficient Negative Sampling},
-         booktitle = {Proceedings of the Thirty-Second {AAAI} Conference on Artificial Intelligence,
-                      New Orleans, Louisiana, USA, February 2-7, 2018},
-         year      = {2018},
-         pages     = {290 - 297}
-         crossref  = {DBLP:conf/aaai/2018},
-         url       = {https://www.aaai.org/ocs/index.php/AAAI/AAAI18/paper/view/17190},
-    }
+    @article{guo2018vse,
+             title={VSE-ens: Visual-Semantic Embeddings with Efficient Negative Sampling},
+             author={Guo, Guibing and Zhai, Songlin and Yuan, Fajie and Liu, Yuan and Wang, Xingwei},
+             journal={arXiv preprint arXiv:1801.01632},
+             year={2018}
+     }
